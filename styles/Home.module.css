@@ -46,3 +46,23 @@
   color: white;
   background-color: #008f77;
 }
+
+.results {
+  display: flex;
+  justify-content: center;
+}
+.resultlist {
+  background-color: #18c5a8;
+  list-style: none;
+  border-radius: 20px;
+  padding: 0;
+}
+.resultitem {
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 10px;
+  padding: 12px 70px;
+}
+.resultitem:hover {
+  background-color: rgb(193, 240, 182);
+}

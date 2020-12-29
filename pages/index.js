@@ -8,6 +8,7 @@ import { artistSearch } from '../services/musicbrainz-api'
 
 export default function Home() {
   const [searchterm, setSearchterm] = useState('')
+  const [artists, setArtists] = useState([])
 
   // Update search term
   const updateTerm = (e) => { setSearchterm(e.target.value) };
@@ -24,9 +25,16 @@ export default function Home() {
     console.log('search for artist')
     artistSearch(searchterm).then(data => {
       if (data) {
-        console.log(data)
+        setArtists(data.artists)
+      } else {
+        setArtists([])
       }
     }).catch(error => console.log(error))
+  }
+
+  // Update artist selection
+  const selectArtist = (e) => {
+    console.log(e.target.dataset.id)
   }
 
   return (
@@ -54,6 +62,23 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {artists && (
+        <div className={styles.results}>
+          <ul className={styles.resultlist}>
+            {artists.map((artist) => (
+              <li
+                className={styles.resultitem}
+                data-id={artist.id}
+                value={artist.id}
+                key={artist.id}
+                onClick={selectArtist}>
+                  {artist.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
