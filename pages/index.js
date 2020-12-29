@@ -36,6 +36,8 @@ export default function Home() {
   const [artists, setArtists] = useState([])
   const [artist, setArtist] = useState()
   const [work, setWork] = useState([]);
+  const [artistSearchCache, setArtistSearchCache] = useState(new Map())
+  const [artistWorkCache, setArtistWorkCache] = useState(new Map())
 
   // Update search term
   const updateTerm = (e) => { setSearchterm(e.target.value) };
@@ -50,13 +52,20 @@ export default function Home() {
   // Search for an artist
   const search = (e) => {
     console.log('search for artist')
-    artistSearch(searchterm).then(data => {
-      if (data) {
-        setArtists(data.artists)
-      } else {
-        setArtists([])
-      }
-    }).catch(error => console.log(error))
+    // Load artist results from cache if search term used before
+    if (artistSearchCache.has(searchterm)) {
+      console.log('artist search from cache')
+      setArtists(artistSearchCache.get(searchterm))
+    } else {
+      artistSearch(searchterm).then(data => {
+        if (data) {
+          setArtistSearchCache(artistSearches => (artistSearches.set(searchterm, data.artists)))
+          setArtists(data.artists)
+        } else {
+          setArtists([])
+        }
+      }).catch(error => console.log(error))
+    }
   }
 
   // Clear search and update artist selection
@@ -72,16 +81,23 @@ export default function Home() {
   useEffect(() => {
     if (artist) {
       console.log('getting artist work')
-      // Get array of songs for the artist
-      getArtistWork(artist.id).then(data => {
-        Promise.all(data.works.map(async (song) => {
-          let wordsInSong = await lyricsSearch(artist.name, song.title)
-          console.log('results', wordsInSong, song.title)
-          return wordsInSong
-        })).then(results => {
-          setWork(results)
-        })
-      }).catch(error => console.log(error))
+      // Load lyric count form cache if already searched
+      if (artistWorkCache.has(artist.id)) {
+        console.log('work from cache')
+        setWork(artistWorkCache.get(artist.id))
+      } else {
+        // Get array of songs for the artist
+        getArtistWork(artist.id).then(data => {
+          Promise.all(data.works.map(async (song) => {
+            let wordsInSong = await lyricsSearch(artist.name, song.title)
+            console.log('results', wordsInSong, song.title)
+            return wordsInSong
+          })).then(results => {
+            setArtistWorkCache(artistWork => (artistWork.set(artist.id, results)))
+            setWork(results)
+          })
+        }).catch(error => console.log(error))
+      }
     }
   }, [artist])
 
