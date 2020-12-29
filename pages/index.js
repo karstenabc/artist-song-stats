@@ -3,6 +3,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { artistSearch } from '../services/musicbrainz-api'
 
 
 export default function Home() {
@@ -21,6 +22,11 @@ export default function Home() {
   // Search for an artist
   const search = (e) => {
     console.log('search for artist')
+    artistSearch(searchterm).then(data => {
+      if (data) {
+        console.log(data)
+      }
+    }).catch(error => console.log(error))
   }
 
   return (
