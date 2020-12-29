@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { artistSearch } from '../services/musicbrainz-api'
+import { artistSearch, getArtistWork } from '../services/musicbrainz-api'
 
 
 // Format date
@@ -54,6 +54,17 @@ export default function Home() {
     setArtists([])
     setArtist(artist)
   }
+
+  // Fetch artist work on artist selection
+  useEffect(() => {
+    if (artist) {
+      console.log('getting artist work')
+      // Get array of songs for the artist
+      getArtistWork(artist.id).then(data => {
+        console.log(data)        
+      }).catch(error => console.log(error))
+    }
+  }, [artist])
 
 
   return (

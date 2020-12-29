@@ -26,3 +26,9 @@ export function artistSearch(artist) {
     let endpoint = base + 'artist/?query=artist:' + artist + '&limit=10'
     return sendRequest(endpoint)
 }
+
+// Return the work belonging to an artist (list of songs)
+export function getArtistWork(artistId) {
+    let endpoint = base + 'work?artist=' + artistId + '&limit=99999'
+    return sendRequest(endpoint)
+}
