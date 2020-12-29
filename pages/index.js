@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -33,9 +34,11 @@ function songStats(stats) {
 
 export default function Home() {
   const [searchterm, setSearchterm] = useState('')
+  const [searched, setSearched] = useState(false)
   const [artists, setArtists] = useState([])
   const [artist, setArtist] = useState()
   const [work, setWork] = useState([]);
+  const [message, setMessage] = useState('')
   const [artistSearchCache, setArtistSearchCache] = useState(new Map())
   const [artistWorkCache, setArtistWorkCache] = useState(new Map())
 
@@ -51,18 +54,25 @@ export default function Home() {
 
   // Search for an artist
   const search = (e) => {
-    console.log('search for artist')
+    setMessage('Searching for Artists')
+    setArtist()
+    setSearched(false)
     // Load artist results from cache if search term used before
     if (artistSearchCache.has(searchterm)) {
-      console.log('artist search from cache')
       setArtists(artistSearchCache.get(searchterm))
+      setSearched(true)
+      setMessage('')
     } else {
       artistSearch(searchterm).then(data => {
         if (data) {
           setArtistSearchCache(artistSearches => (artistSearches.set(searchterm, data.artists)))
           setArtists(data.artists)
+          setSearched(true)
+          setMessage('')
         } else {
           setArtists([])
+          setSearched(true)
+          setMessage('No artists found for this search')
         }
       }).catch(error => console.log(error))
     }
@@ -72,6 +82,7 @@ export default function Home() {
   const selectArtist = (e) => {
     let artist = artists.filter(artist => artist.id == e.target.dataset.id)[0]
     setSearchterm('')
+    setSearched(false)
     setWork([])
     setArtists([])
     setArtist(artist)
@@ -80,11 +91,13 @@ export default function Home() {
   // Fetch artist work on artist selection
   useEffect(() => {
     if (artist) {
-      console.log('getting artist work')
+      let possessivePostfix = artist.name.endsWith('s') ? '\'' : '\'s'
+      setMessage('Getting ' + artist.name + possessivePostfix + ' songs')
       // Load lyric count form cache if already searched
       if (artistWorkCache.has(artist.id)) {
         console.log('work from cache')
         setWork(artistWorkCache.get(artist.id))
+        setMessage('')
       } else {
         // Get array of songs for the artist
         getArtistWork(artist.id).then(data => {
@@ -95,6 +108,7 @@ export default function Home() {
           })).then(results => {
             setArtistWorkCache(artistWork => (artistWork.set(artist.id, results)))
             setWork(results)
+            setMessage('')
           })
         }).catch(error => console.log(error))
       }
@@ -130,6 +144,14 @@ export default function Home() {
 
       {artists && (
         <div className={styles.results}>
+          {searched && artists.length === 0 && (
+            <div>
+              <p>No artists were found matching:
+                <span className={styles.artistNotFound}> {searchterm}</span>
+              </p>
+              <p>Please check you have spelled the name correctly and try again.</p>
+            </div>
+          )}
           <ul className={styles.resultlist}>
             {artists.map((artist) => (
               <li
@@ -151,6 +173,18 @@ export default function Home() {
           {artistInfo(artist)}
           <h3>Song Stats</h3>
           {songStats(songStatistics(work))}
+        </div>
+      )}
+
+      {message !== '' && (
+        <div className={styles.message}>
+          <Image
+            src='/static/loading.gif'
+            alt='Loading indicator'
+            height={100}
+            width={175}
+            />
+          <p>{message}...</p>
         </div>
       )}
     </div>

@@ -51,6 +51,9 @@
   display: flex;
   justify-content: center;
 }
+.results p {
+  font-size: 1.5rem;
+}
 .resultlist {
   background-color: #18c5a8;
   list-style: none;
@@ -66,6 +69,9 @@
 .resultitem:hover {
   background-color: rgb(193, 240, 182);
 }
+.artistNotFound {
+  color: red;
+}
 
 .details {
   padding: 0 5%;
@@ -77,4 +83,25 @@
 .details p {
   margin: 0.5rem;
   margin-left: 1.25rem;
+}
+
+.message {
+  color: #008f77;
+  background-color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5em;
+  border: 2px solid  #008f77;
+  border-radius: 20px;
+  position: fixed;
+  max-width:500px;
+  margin: 3% auto;
+  margin-bottom: 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.message p {
+  margin-top: 0;
 }
