@@ -6,9 +6,24 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { artistSearch } from '../services/musicbrainz-api'
 
 
+// Format date
+function dateToString(dateString) {
+  let date = new Date(dateString)
+  return date.toDateString()
+}
+
+// Return information about the selected artist
+function artistInfo(artist) {
+  let start = dateToString(artist['life-span'].begin);
+  let end = artist['life-span'].end ? dateToString(artist['life-span'].end) : 'Present';
+  return <p>{artist.type} ({start} - {end})</p>
+}
+
+
 export default function Home() {
   const [searchterm, setSearchterm] = useState('')
   const [artists, setArtists] = useState([])
+  const [artist, setArtist] = useState()
 
   // Update search term
   const updateTerm = (e) => { setSearchterm(e.target.value) };
@@ -32,10 +47,14 @@ export default function Home() {
     }).catch(error => console.log(error))
   }
 
-  // Update artist selection
+  // Clear search and update artist selection
   const selectArtist = (e) => {
-    console.log(e.target.dataset.id)
+    let artist = artists.filter(artist => artist.id == e.target.dataset.id)[0]
+    setSearchterm('')
+    setArtists([])
+    setArtist(artist)
   }
+
 
   return (
     <div>
@@ -77,6 +96,13 @@ export default function Home() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {artist && ( 
+        <div className={styles.details}>
+          <h2>{artist.name}</h2>
+          {artistInfo(artist)}
         </div>
       )}
     </div>

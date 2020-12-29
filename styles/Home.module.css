@@ -66,3 +66,15 @@
 .resultitem:hover {
   background-color: rgb(193, 240, 182);
 }
+
+.details {
+  padding: 0 5%;
+}
+.details h2 {
+  font-size: 1.8em;
+  margin: 0;
+}
+.details p {
+  margin: 0.5rem;
+  margin-left: 1.25rem;
+}
