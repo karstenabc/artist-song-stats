@@ -1,30 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## About
+This is a NextJS project that allows you to search for an artist and see some statistics on their work.
 
-## Getting Started
+## Set Up
+To set the project up locally, please complete the following steps:
 
-First, run the development server:
-
+1. Make sure your system has [Node.js](https://nodejs.org/en/) 10.13 or later. If you need to install NodeJS, on Ubuntu, run:
 ```bash
-npm run dev
-# or
-yarn dev
+sudo apt install nodejs
+```
+To check the install succeeded, run:
+```bash
+node -v
+```
+This should show the currently installed NodeJS version, eg: `v10.19.0`.
+
+
+2. You will then need to install the Node Package Manager (NPM), for Ubuntu, run the following:
+```bash
+sudo apt install npm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Once NPM has been installed, clone this project from [Github](https://github.com/karstenabc/artist-song-stats) by running the following command:
+```bash
+git clone https://github.com/karstenabc/artist-song-stats.git
+```
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+4. Enter into the project directory:
+```bash
+cd artist-song-stats
+```
 
-## Learn More
+5. Install the projects' dependancies:
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Finally, run the development server:
+```bash
+npm run dev (if you have followed the above instructions)
+# or
+yarn dev (if your system is set up with yarn)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+7. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Usage
+1. Type an artist or band name into the search bar at the top and press `Return/Enter` or click the `Search` button.
+2. Click on the relevant artist from the list of artists that appears (this will show some information about the selected artist).
+3. Once the lyrics have been fetched and calculated, you should see the stats for their work.
