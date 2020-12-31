@@ -23,7 +23,8 @@ function sendRequest(url) {
 
 // Return top 10 artists matching the search term
 export function artistSearch(artist) {
-    let endpoint = base + 'artist/?query=artist:' + artist + '&limit=10'
+    let artistName = artist.replaceAll(' ', '%20')
+    let endpoint = base + 'artist/?query=artist:' + artistName + '&limit=10'
     return sendRequest(endpoint)
 }
 

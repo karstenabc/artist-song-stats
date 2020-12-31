@@ -6,7 +6,11 @@ export function dateToString(dateString) {
    
 // Comma seperate thousands
 export function formattedNumber(number) {
-    return number 
-    ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    : ''
+    if (number) {
+        if ((number + '').includes('.')) {
+            number.toFixed(2)
+        }
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+    return ''
 }

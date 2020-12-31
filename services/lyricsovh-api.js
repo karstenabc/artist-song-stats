@@ -6,7 +6,6 @@ function sendRequest(url) {
         if (response.ok) {
             return response.json()
         } else {
-            console.log(response)
             throw new Error('Error getting lyrics')
         }
     })

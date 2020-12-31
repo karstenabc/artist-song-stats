@@ -1,7 +1,5 @@
 // Calculate statistics for an artist's work
 export function songStatistics(work) {
-    console.log('STATS')
-    console.log(work)
     let min = 0
     let max = 0
     let wordCount = 0

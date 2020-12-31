@@ -9,6 +9,7 @@ import { lyricsSearch } from '../services/lyricsovh-api'
 import { dateToString, formattedNumber } from '../helpers/formatters'
 import { songStatistics } from '../helpers/statistics'
 import { topSongsByWordCount } from '../helpers/charts'
+import { compareTableBody } from '../helpers/tables'
 
 
 // Return information about the selected artist
@@ -34,6 +35,9 @@ function songStats(stats) {
 
 
 export default function Home() {
+  const [view, setView] = useState('individual')
+  const [compare, setCompare] = useState(new Map())
+  const [compareColumn, setCompareColumn] = useState(2)
   const [searchterm, setSearchterm] = useState('')
   const [searched, setSearched] = useState(false)
   const [artists, setArtists] = useState([])
@@ -42,6 +46,16 @@ export default function Home() {
   const [message, setMessage] = useState('')
   const [artistSearchCache, setArtistSearchCache] = useState(new Map())
   const [artistWorkCache, setArtistWorkCache] = useState(new Map())
+
+  // Update search term
+  const changeView = (e) => {
+    setView(e.target.dataset.view)
+  };
+
+  // Update which column to replace with a new search
+  const updateCompareColumn = (e) => {
+    setCompareColumn(parseInt(e.target.value))
+  }
 
   // Update search term
   const updateTerm = (e) => {
@@ -99,7 +113,6 @@ export default function Home() {
       setMessage('Getting ' + artist.name + possessivePostfix + ' songs')
       // Load lyric count form cache if already searched
       if (artistWorkCache.has(artist.id)) {
-        console.log('work from cache')
         setWork(artistWorkCache.get(artist.id))
         setMessage('')
       } else {
@@ -113,7 +126,18 @@ export default function Home() {
             }
           })).then(results => {
             setArtistWorkCache(artistWork => (artistWork.set(artist.id, results)))
-            setWork(results)
+            if (view === 'individual') {
+              setWork(results)
+              setCompare(compareArtists => (compareArtists.set(1, {
+                'artist': artist,
+                'work': results
+              })))
+            } else {
+              setCompare(compareArtists => (compareArtists.set(compareColumn, {
+                'artist': artist,
+                'work': results
+              })))
+            }
             setMessage('')
           })
         }).catch(error => console.log(error))
@@ -173,18 +197,36 @@ export default function Home() {
         </div>
       )}
 
-      {artist && ( 
+      {view === 'individual' && artist && ( 
         <div className={styles.details}>
           <div className={styles.stats}>
             <h2>{artist.name}</h2>
             {artistInfo(artist)}
             <h3>Song Stats</h3>
             {songStats(songStatistics(work))}
+            <button onClick={changeView} data-view={'compare'}>Compare Artist</button>
           </div>
           <div className={styles.charts}>
             <h3>Top Songs by Word Count</h3>
             {topSongsByWordCount(work)}
           </div>
+        </div>
+      )}
+
+      {view === 'compare' && (
+        <div className={styles.compare}>
+          <table>
+            <tbody>
+              {compareTableBody(compare)}
+              <tr>
+                <th scope="row">Artist to search</th>
+                <td><input type="radio" name="columnToSearch" value="1" onChange={updateCompareColumn}/></td>
+                <td><input type="radio" name="columnToSearch" value="2" onChange={updateCompareColumn}/></td>
+                <td><input type="radio" name="columnToSearch" value="3" onChange={updateCompareColumn}/></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Select the column to be overwritten by the next search</p>
         </div>
       )}
 
