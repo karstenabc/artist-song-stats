@@ -8,7 +8,7 @@ export function dateToString(dateString) {
 export function formattedNumber(number) {
     if (number) {
         if ((number + '').includes('.')) {
-            number.toFixed(2)
+            number = number.toFixed(2)
         }
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }

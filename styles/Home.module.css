@@ -78,7 +78,8 @@
   display: flex;
   flex-flow: row wrap;
 }
-.details button {
+.details button,
+.compare button {
   font-size: 1rem;
   border: none;
   cursor: pointer;
@@ -87,7 +88,8 @@
   background:rgba(75, 192, 192, 0.7);
   margin-top: 20px;
 }
-.details button:hover {
+.details button:hover,
+.compare button:hover {
   background: #18c5a8;
 }
 .stats {
@@ -99,7 +101,8 @@
   width: 50%;
 }
 @media (max-width: 992px) {
-  .stats, .charts {
+  .stats,
+  .charts {
     width: 100%;
   }
 }
@@ -120,7 +123,8 @@
   margin: 0 auto;
   border-collapse:collapse;
 }
-.compare th, .compare td {
+.compare th,
+.compare td {
   padding: 5px 10px;
 }
 .compare th {

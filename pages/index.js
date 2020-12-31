@@ -49,6 +49,13 @@ export default function Home() {
 
   // Update search term
   const changeView = (e) => {
+    let view = e.target.dataset.view;
+    if (view == 'individual') {
+      let column = e.target.dataset.col;
+      setArtists([])
+      setArtist(compare.get(parseInt(column)).artist)
+      setWork(compare.get(parseInt(column)).work)
+    }
     setView(e.target.dataset.view)
   };
 
@@ -113,7 +120,18 @@ export default function Home() {
       setMessage('Getting ' + artist.name + possessivePostfix + ' songs')
       // Load lyric count form cache if already searched
       if (artistWorkCache.has(artist.id)) {
-        setWork(artistWorkCache.get(artist.id))
+        if (view === 'individual') {
+          setWork(artistWorkCache.get(artist.id))
+          setCompare(compareArtists => (compareArtists.set(1, {
+            'artist': artist,
+            'work': artistWorkCache.get(artist.id)
+          })))
+        } else {
+          setCompare(compareArtists => (compareArtists.set(compareColumn, {
+            'artist': artist,
+            'work': artistWorkCache.get(artist.id)
+          })))
+        }
         setMessage('')
       } else {
         // Get array of songs for the artist
@@ -143,6 +161,7 @@ export default function Home() {
         }).catch(error => console.log(error))
       }
     }
+    console.log(compare)
   }, [artist])
 
 
@@ -183,16 +202,20 @@ export default function Home() {
             </div>
           )}
           <ul className={styles.resultlist}>
-            {artists.map((artist) => (
-              <li
-                className={styles.resultitem}
-                data-id={artist.id}
-                value={artist.id}
-                key={artist.id}
-                onClick={selectArtist}>
-                  {artist.name}
-              </li>
-            ))}
+            {artists.map((artist) => {
+              let start = dateToString(artist['life-span'].begin);
+              let end = artist['life-span'].end ? dateToString(artist['life-span'].end) : 'Present';
+              if (artist.type) {
+                return <li
+                  className={styles.resultitem}
+                  data-id={artist.id}
+                  value={artist.id}
+                  key={artist.id}
+                  onClick={selectArtist}>
+                    {artist.name} ({artist.type}, {start} - {end})
+                </li>
+              }
+            })}
           </ul>
         </div>
       )}
@@ -218,6 +241,18 @@ export default function Home() {
           <table>
             <tbody>
               {compareTableBody(compare)}
+              <tr>
+              <th scope="row"></th>
+              <td>{compare.has(1) && (
+                <button data-view={'individual'} data-col={1} onClick={changeView}>View</button>
+              )}</td>
+              <td>{compare.has(2) && (
+                <button data-view={'individual'} data-col={2} onClick={changeView}>View</button>
+              )}</td>
+              <td>{compare.has(3) && (
+                <button data-view={'individual'} data-col={3} onClick={changeView}>View</button>
+              )}</td>
+              </tr>
               <tr>
                 <th scope="row">Artist to search</th>
                 <td><input type="radio" name="columnToSearch" value="1" onChange={updateCompareColumn}/></td>
