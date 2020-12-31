@@ -75,6 +75,21 @@
 
 .details {
   padding: 0 5%;
+  display: flex;
+  flex-flow: row wrap;
+}
+.stats {
+  margin-bottom: 30px;
+  width: 50%;
+}
+.charts {
+  text-align: center;
+  width: 50%;
+}
+@media (max-width: 992px) {
+  .stats, .charts {
+    width: 100%;
+  }
 }
 .details h2 {
   font-size: 1.8em;

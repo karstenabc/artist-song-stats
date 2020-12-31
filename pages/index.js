@@ -8,6 +8,7 @@ import { artistSearch, getArtistWork } from '../services/musicbrainz-api'
 import { lyricsSearch } from '../services/lyricsovh-api'
 import { dateToString, formattedNumber } from '../helpers/formatters'
 import { songStatistics } from '../helpers/statistics'
+import { topSongsByWordCount } from '../helpers/charts'
 
 
 // Return information about the selected artist
@@ -43,7 +44,10 @@ export default function Home() {
   const [artistWorkCache, setArtistWorkCache] = useState(new Map())
 
   // Update search term
-  const updateTerm = (e) => { setSearchterm(e.target.value) };
+  const updateTerm = (e) => {
+    setSearched(false)
+    setSearchterm(e.target.value)
+  };
 
   // Search if enter is pressed
   const checkEnter = (e) => {
@@ -103,8 +107,10 @@ export default function Home() {
         getArtistWork(artist.id).then(data => {
           Promise.all(data.works.map(async (song) => {
             let wordsInSong = await lyricsSearch(artist.name, song.title)
-            console.log('results', wordsInSong, song.title)
-            return wordsInSong
+            return {
+              'name': song.title,
+              'wordCount': wordsInSong
+            }
           })).then(results => {
             setArtistWorkCache(artistWork => (artistWork.set(artist.id, results)))
             setWork(results)
@@ -169,10 +175,16 @@ export default function Home() {
 
       {artist && ( 
         <div className={styles.details}>
-          <h2>{artist.name}</h2>
-          {artistInfo(artist)}
-          <h3>Song Stats</h3>
-          {songStats(songStatistics(work))}
+          <div className={styles.stats}>
+            <h2>{artist.name}</h2>
+            {artistInfo(artist)}
+            <h3>Song Stats</h3>
+            {songStats(songStatistics(work))}
+          </div>
+          <div className={styles.charts}>
+            <h3>Top Songs by Word Count</h3>
+            {topSongsByWordCount(work)}
+          </div>
         </div>
       )}
 

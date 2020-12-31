@@ -7,16 +7,16 @@ export function songStatistics(work) {
     let wordCount = 0
 
     for (let i = 0; i < work.length; i++) {
-        if (work[i] > 1) {
+        if (work[i].wordCount > 1) {
             // Calculate min and max words in a song
-            if (work[i] < min || min === 0) {
-                min = work[i]
+            if (work[i].wordCount < min || min === 0) {
+                min = work[i].wordCount
             }
-            if (work[i] > max || max === 0) {
-                max = work[i]
+            if (work[i].wordCount > max || max === 0) {
+                max = work[i].wordCount
             }
             // Calculate total words
-            wordCount += work[i]
+            wordCount += work[i].wordCount
         }
     }
 
