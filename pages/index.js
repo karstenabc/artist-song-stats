@@ -64,6 +64,16 @@ export default function Home() {
     setCompareColumn(parseInt(e.target.value))
   }
 
+  // Delete a column from the compare table
+  const removeCompare = (e) => {
+    let col = parseInt(e.target.dataset.col)
+    let newComparison = compare
+    newComparison.delete(col)
+    setCompare(newComparison)
+    setCompareColumn(4)
+    setCompareColumn(col)
+  }
+
   // Update search term
   const updateTerm = (e) => {
     setSearched(false)
@@ -111,31 +121,30 @@ export default function Home() {
     setWork([])
     setArtists([])
     setArtist(artist)
+    updateWork(artist)
   }
 
   // Fetch artist work on artist selection
-  useEffect(() => {
+  const updateWork = (artist) => {
     if (artist) {
+      let column = compareColumn;
       let possessivePostfix = artist.name.endsWith('s') ? '\'' : '\'s'
       setMessage('Getting ' + artist.name + possessivePostfix + ' songs')
       // Load lyric count form cache if already searched
       if (artistWorkCache.has(artist.id)) {
         if (view === 'individual') {
           setWork(artistWorkCache.get(artist.id))
-          setCompare(compareArtists => (compareArtists.set(1, {
-            'artist': artist,
-            'work': artistWorkCache.get(artist.id)
-          })))
-        } else {
-          setCompare(compareArtists => (compareArtists.set(compareColumn, {
-            'artist': artist,
-            'work': artistWorkCache.get(artist.id)
-          })))
+          column = 1;
         }
+        setCompare(compareArtists => (compareArtists.set(column, {
+          'artist': artist,
+          'work': artistWorkCache.get(artist.id)
+        })))
         setMessage('')
       } else {
         // Get array of songs for the artist
         getArtistWork(artist.id).then(data => {
+          // Parralel requests to get number of lyrics in each song
           Promise.all(data.works.map(async (song) => {
             let wordsInSong = await lyricsSearch(artist.name, song.title)
             return {
@@ -146,23 +155,18 @@ export default function Home() {
             setArtistWorkCache(artistWork => (artistWork.set(artist.id, results)))
             if (view === 'individual') {
               setWork(results)
-              setCompare(compareArtists => (compareArtists.set(1, {
-                'artist': artist,
-                'work': results
-              })))
-            } else {
-              setCompare(compareArtists => (compareArtists.set(compareColumn, {
-                'artist': artist,
-                'work': results
-              })))
+              column = 1;
             }
+            setCompare(compareArtists => (compareArtists.set(column, {
+              'artist': artist,
+              'work': results
+            })))
             setMessage('')
           })
         }).catch(error => console.log(error))
       }
     }
-    console.log(compare)
-  }, [artist])
+  }
 
 
   return (
@@ -205,7 +209,7 @@ export default function Home() {
             {artists.map((artist) => {
               let start = dateToString(artist['life-span'].begin);
               let end = artist['life-span'].end ? dateToString(artist['life-span'].end) : 'Present';
-              if (artist.type) {
+              if (artist.type && artist['life-span'].begin) {
                 return <li
                   className={styles.resultitem}
                   data-id={artist.id}
@@ -242,22 +246,49 @@ export default function Home() {
             <tbody>
               {compareTableBody(compare)}
               <tr>
-              <th scope="row"></th>
-              <td>{compare.has(1) && (
-                <button data-view={'individual'} data-col={1} onClick={changeView}>View</button>
-              )}</td>
-              <td>{compare.has(2) && (
-                <button data-view={'individual'} data-col={2} onClick={changeView}>View</button>
-              )}</td>
-              <td>{compare.has(3) && (
-                <button data-view={'individual'} data-col={3} onClick={changeView}>View</button>
-              )}</td>
+                <th scope="row"></th>
+                <td>{compare.has(1) && (
+                  <button data-col={1} onClick={removeCompare}>Remove</button>
+                )}</td>
+                <td>{compare.has(2) && (
+                  <button data-col={2} onClick={removeCompare}>Remove</button>
+                )}</td>
+                <td>{compare.has(3) && (
+                  <button data-col={3} onClick={removeCompare}>Remove</button>
+                )}</td>
+              </tr>
+              <tr>
+                <th scope="row"></th>
+                <td>{compare.has(1) && (
+                  <button data-view={'individual'} data-col={1} onClick={changeView}>View</button>
+                )}</td>
+                <td>{compare.has(2) && (
+                  <button data-view={'individual'} data-col={2} onClick={changeView}>View</button>
+                )}</td>
+                <td>{compare.has(3) && (
+                  <button data-view={'individual'} data-col={3} onClick={changeView}>View</button>
+                )}</td>
               </tr>
               <tr>
                 <th scope="row">Artist to search</th>
-                <td><input type="radio" name="columnToSearch" value="1" onChange={updateCompareColumn}/></td>
-                <td><input type="radio" name="columnToSearch" value="2" onChange={updateCompareColumn}/></td>
-                <td><input type="radio" name="columnToSearch" value="3" onChange={updateCompareColumn}/></td>
+                <td>
+                  {compareColumn === 1 
+                    ? <input type="radio" name="columnToSearch" value="1" onChange={updateCompareColumn} checked/>
+                    : <input type="radio" name="columnToSearch" value="1" onChange={updateCompareColumn}/>
+                  }
+                </td>
+                <td>
+                  {compareColumn === 2 
+                    ? <input type="radio" name="columnToSearch" value="2" onChange={updateCompareColumn} checked/>
+                    : <input type="radio" name="columnToSearch" value="2" onChange={updateCompareColumn}/>
+                  }
+                </td>
+                <td>
+                  {compareColumn === 3 
+                    ? <input type="radio" name="columnToSearch" value="3" onChange={updateCompareColumn} checked/>
+                    : <input type="radio" name="columnToSearch" value="3" onChange={updateCompareColumn}/>
+                  }
+                </td>
               </tr>
             </tbody>
           </table>

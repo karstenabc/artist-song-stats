@@ -55,7 +55,7 @@
   font-size: 1.5rem;
 }
 .resultlist {
-  background-color: #18c5a8;
+  background-color: rgba(59, 211, 186, 0.685);
   list-style: none;
   border-radius: 20px;
   padding: 0;
@@ -67,7 +67,7 @@
   padding: 12px 70px;
 }
 .resultitem:hover {
-  background-color: rgb(193, 240, 182);
+  background-color: rgba(59, 211, 186, 1);
 }
 .artistNotFound {
   color: red;
@@ -146,9 +146,8 @@
   border-radius: 20px;
   position: fixed;
   max-width:500px;
-  margin: 3% auto;
-  margin-bottom: 10px;
-  bottom: 0;
+  margin: 2% auto;
+  bottom: 1%;
   left: 0;
   right: 0;
   z-index: 1;

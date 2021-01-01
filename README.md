@@ -30,7 +30,7 @@ git clone https://github.com/karstenabc/artist-song-stats.git
 cd artist-song-stats
 ```
 
-5. Install the projects' dependancies:
+5. Install the projects' dependencies:
 ```bash
 npm install
 ```
@@ -46,6 +46,17 @@ yarn dev (if your system is set up with yarn)
 
 
 ## Usage
+### Viewing a Single Artist
 1. Type an artist or band name into the search bar at the top and press `Return/Enter` or click the `Search` button.
 2. Click on the relevant artist from the list of artists that appears (this will show some information about the selected artist).
-3. Once the lyrics have been fetched and calculated, you should see the stats for their work.
+3. Once the lyrics have been fetched and calculated, you should see the stats for their work along with a graph showing the names of their top ten songs measured by word count.
+
+### Comparing Artists
+You can compare up to three artists side-by-side.
+1. After searching for the first artist, click on the `Compare` button.
+2. Select which column to insert another artist using the radio buttons below the columns.
+3. Search for the next artist and click the relevant item from the list of artists that match the name that has been searched. The chosen column will be populated with information when the data has been collected and the statistics have been computed.
+
+When comparing, each column has the following action buttons:
+- `Remove` will clear the artist for that particular column.
+- `View` will take you back to the individual view for the selected artist.
